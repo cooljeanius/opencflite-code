@@ -1,0 +1,8 @@
+This directory contains sources required for replacing functions as
+determined by AC_REPLACE_FUNCS in the configure script. This directory is
+chosen by AC_CONFIG_LIBOBJ_DIR([compat]) in the configure script. If you
+are missing the necessary sources for all the LIBOBJs required by all the
+invocations of AC_REPLACE_FUNCS, try looking in gnulib:
+http://www.gnu.org/software/gnulib/
+(autotools is a GNU project after all, so AC_REPLACE_FUNCS assumes that
+you have GNU sources available to you)

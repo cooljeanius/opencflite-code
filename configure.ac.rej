@@ -1,0 +1,51 @@
+--- configure.ac.bak	2013-05-05 02:51:11.000000000 -0400
++++ configure.ac	2013-05-05 03:09:25.000000000 -0400
+@@ -19,7 +19,7 @@
+ # Interface number, revision and age of the library interface passed to
+ # libtool when the library is linked.
+ #
+-AC_SUBST(CF_VERSION_INFO, [476:19:0])
++AC_SUBST([CF_VERSION_INFO], [476:19:0])
+ 
+ #
+ # Check the sanity of thes source directory by checking for the
+@@ -103,17 +103,20 @@
+ #
+ # Checks for programs
+ #
++AC_PROG_AWK
+ AC_PROG_CC
+ AC_PROG_CXX
+ CF_BSD_SOURCE
+ AC_GNU_SOURCE
++AM_PROG_AR
+ AM_PROG_CC_C_O
+ AC_PROG_CPP
+ AC_PROG_INSTALL
+ AC_PROG_LIBTOOL
+ AC_PROG_LN_S
++AC_PROG_MAKE_SET
+ AC_PROG_RANLIB
+-AC_PATH_PROG(CMP, cmp)
++AC_PATH_PROG([CMP], [cmp])
+ 
+ # Support building DLLs on Windows
+ AC_LIBTOOL_WIN32_DLL
+@@ -497,7 +504,7 @@
+ #
+ # Check for POSIX thread support.
+ #
+-ACX_PTHREAD([],AC_MSG_ERROR([${PACKAGE_NAME} requires POSIX threads.]))
++ACX_PTHREAD([],[AC_MSG_ERROR([${PACKAGE_NAME} requires POSIX threads.])])
+ 
+ CFLAGS="${PTHREAD_CFLAGS} ${CFLAGS}"
+ CPPFLAGS="${PTHREAD_CPPFLAGS} ${CPPFLAGS}"
+@@ -576,7 +583,7 @@
+ # errors.
+ #
+ 
+-AC_ARG_WITH(warnings-as-errors,
++AC_ARG_WITH([warnings-as-errors],
+ 	AS_HELP_STRING([--with-warnings-as-errors=OPTION],
+ 		       [Compile the source code treating compiler warnings as errors.]),
+ 	[

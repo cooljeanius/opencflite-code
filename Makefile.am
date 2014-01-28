@@ -1,4 +1,4 @@
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I m4 --install
 
 # We need to ensure that the top-level (i.e. source) directory is
 # built before tests and examples, so we explicitly add '.' to the
@@ -7,7 +7,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS				= include compat . tests examples
 
 #
-# We don't want to modify any of the package source to include the
+# We do NOT want to modify any of the package source to include the
 # configuration header, so we use the compiler to include it as a
 # prefix header. This is likely GCC specific, so we need to probably
 # abstract this further as other deployment targets are supported.
