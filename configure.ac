@@ -51,24 +51,10 @@ AC_CONFIG_HEADERS([include/config.h])
 AC_CONFIG_LIBOBJ_DIR([compat])
 
 #
-# Initialize automake for the package, specifying the minimum automake
-# version allowed and that we are not an official GNU package, but
-# rather a non-GNU package leveraging automake.
-# Also specify that some of our objects are built in subdirectories.
-#
-AM_INIT_AUTOMAKE([1.9 foreign subdir-objects])
-
-#
-# Enable maintainer mode to prevent the package from constantly trying
-# to rebuild configure, Makefile.in, etc. Rebuilding such files rarely,
-# if ever, needs to be done "in the field".
-#
-AM_MAINTAINER_MODE
-
-#
 # Figure out what the canonical build, host and target tuples are.
+# Do this BEFORE initializing automake
 #
-AC_CANONICAL_HOST
+AC_CANONICAL_TARGET dnl# calls the other two
 
 AC_MSG_CHECKING([for supported deployment target])
 
@@ -100,6 +86,21 @@ case ${host_os} in
 esac
 
 AC_MSG_RESULT([${deployment_target}])
+
+dnl#
+# Initialize automake for the package, specifying the minimum automake
+# version allowed. Also, even though we are not an official GNU package,
+# gnits strictness can still be useful to catch nitpicky things.
+# Also specify that some of our objects are built in subdirectories.
+#
+AM_INIT_AUTOMAKE([1.9 gnits subdir-objects])
+
+#
+# Enable maintainer mode to prevent the package from constantly trying
+# to rebuild configure, Makefile.in, etc. Rebuilding such files rarely,
+# if ever, needs to be done "in the field".
+#
+AM_MAINTAINER_MODE
 
 #
 # Checks for programs

@@ -24,3 +24,12 @@ CoreFoundation.pc
 *.la
 *.a
 Makefile
+CF-Objects/*
+dist/*
+macosx/build/*
+*.build
+*.pbxuser
+*.perspectivev3
+confdefs.h
+conftest*
+conf*/*.awk

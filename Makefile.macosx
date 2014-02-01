@@ -70,7 +70,6 @@ install: $(OBJBASE)/CoreFoundation_$(STYLE)
 	/bin/mkdir -p $(DSTBASE)/CoreFoundation.framework/Versions/A/Resources/en.lproj
 	/bin/cp $(PUBLIC_HEADERS) $(DSTBASE)/CoreFoundation.framework/Versions/A/Headers
 	/bin/cp $(PRIVATE_HEADERS) $(DSTBASE)/CoreFoundation.framework/Versions/A/PrivateHeaders
-	#/usr/bin/strip -S -o $(DSTBASE)/CoreFoundation.framework/Versions/A/CoreFoundation $(OBJBASE)/CoreFoundation_$(STYLE)
 	/bin/cp $(OBJBASE)/CoreFoundation_$(STYLE) $(DSTBASE)/CoreFoundation.framework/Versions/A/CoreFoundation
 	/usr/bin/dsymutil $(DSTBASE)/CoreFoundation.framework/Versions/A/CoreFoundation -o $(DSTBASE)/CoreFoundation.framework.dSYM
 	/usr/sbin/chown -RH -f root:wheel $(DSTBASE)/CoreFoundation.framework

@@ -869,7 +869,14 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91EF08733DB70010E9CD /* Build configuration list for PBXProject "CFLite" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* CFLite */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1077,16 +1084,24 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_EXCEPTIONS = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_INPUT_FILETYPE = sourcecode.c.c;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = 4.2;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_PKGINFO_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					../..,
 					../../include,
 					../../include/mach_support,
 				);
+				LD_GENERATE_MAP_FILE = YES;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};

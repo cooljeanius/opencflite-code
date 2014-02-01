@@ -731,14 +731,6 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
-host_os
-host_vendor
-host_cpu
-host
-build_os
-build_vendor
-build_cpu
-build
 MAINT
 MAINTAINER_MODE_FALSE
 MAINTAINER_MODE_TRUE
@@ -769,6 +761,18 @@ am__isrc
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
+target_os
+target_vendor
+target_cpu
+target
+host_os
+host_vendor
+host_cpu
+host
+build_os
+build_vendor
+build_cpu
+build
 CF_VERSION_INFO
 target_alias
 host_alias
@@ -1463,6 +1467,7 @@ Program names:
 System types:
   --build=BUILD     configure for building on BUILD [guessed]
   --host=HOST       cross-compile to build programs to run on HOST [BUILD]
+  --target=TARGET   configure for building compilers for TARGET [HOST]
 _ACEOF
 fi
 
@@ -2976,9 +2981,156 @@ ac_config_headers="$ac_config_headers include/config.h"
 
 
 #
+# Figure out what the canonical build, host and target tuples are.
+# Do this BEFORE initializing automake
+#
+# Make sure we can run config.sub.
+$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
+  as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
+$as_echo_n "checking build system type... " >&6; }
+if ${ac_cv_build+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_build_alias=$build_alias
+test "x$ac_build_alias" = x &&
+  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
+test "x$ac_build_alias" = x &&
+  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
+ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
+  as_fn_error $? "$SHELL $ac_aux_dir/config.sub $ac_build_alias failed" "$LINENO" 5
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
+$as_echo "$ac_cv_build" >&6; }
+case $ac_cv_build in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
+esac
+build=$ac_cv_build
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_build
+shift
+build_cpu=$1
+build_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+build_os=$*
+IFS=$ac_save_IFS
+case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
+$as_echo_n "checking host system type... " >&6; }
+if ${ac_cv_host+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$host_alias" = x; then
+  ac_cv_host=$ac_cv_build
+else
+  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
+    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
+$as_echo "$ac_cv_host" >&6; }
+case $ac_cv_host in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
+esac
+host=$ac_cv_host
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_host
+shift
+host_cpu=$1
+host_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+host_os=$*
+IFS=$ac_save_IFS
+case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking target system type" >&5
+$as_echo_n "checking target system type... " >&6; }
+if ${ac_cv_target+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$target_alias" = x; then
+  ac_cv_target=$ac_cv_host
+else
+  ac_cv_target=`$SHELL "$ac_aux_dir/config.sub" $target_alias` ||
+    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $target_alias failed" "$LINENO" 5
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_target" >&5
+$as_echo "$ac_cv_target" >&6; }
+case $ac_cv_target in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical target" "$LINENO" 5;;
+esac
+target=$ac_cv_target
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_target
+shift
+target_cpu=$1
+target_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+target_os=$*
+IFS=$ac_save_IFS
+case $target_os in *\ *) target_os=`echo "$target_os" | sed 's/ /-/g'`;; esac
+
+
+# The aliases save the names the user supplied, while $host etc.
+# will get canonicalized.
+test -n "$target_alias" &&
+  test "$program_prefix$program_suffix$program_transform_name" = \
+    NONENONEs,x,x, &&
+  program_prefix=${target_alias}-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for supported deployment target" >&5
+$as_echo_n "checking for supported deployment target... " >&6; }
+
+case ${host_os} in
+	*darwin*)
+		CPPFLAGS="-DDEPLOYMENT_TARGET_MACOSX=1 -DTARGET_OS_MAC=1 ${CPPFLAGS}"
+		deployment_target="Mac OS X"
+		;;
+
+	*freebsd*)
+		CPPFLAGS="-DDEPLOYMENT_TARGET_FREEBSD=1 -DTARGET_OS_FREEBSD=1 ${CPPFLAGS}"
+		deployment_target="FreeBSD"
+		;;
+
+	*linux*)
+		CPPFLAGS="-DDEPLOYMENT_TARGET_LINUX=1 -DTARGET_OS_LINUX=1 ${CPPFLAGS}"
+		deployment_target="Linux"
+		;;
+
+	*mingw*)
+		CPPFLAGS="-DDEPLOYMENT_TARGET_WINDOWS=1 -DTARGET_OS_WIN32=1 ${CPPFLAGS}"
+		deployment_target="Windows"
+		;;
+
+	*)
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: failed" >&5
+$as_echo "failed" >&6; }
+		as_fn_error $? "Unsupported deployment target ${host_os}" "$LINENO" 5;
+		;;
+esac
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${deployment_target}" >&5
+$as_echo "${deployment_target}" >&6; }
+
 # Initialize automake for the package, specifying the minimum automake
-# version allowed and that we are not an official GNU package, but
-# rather a non-GNU package leveraging automake.
+# version allowed. Also, even though we are not an official GNU package,
+# gnits strictness can still be useful to catch nitpicky things.
 # Also specify that some of our objects are built in subdirectories.
 #
 am__api_version='1.14'
@@ -3588,115 +3740,6 @@ fi
   MAINT=$MAINTAINER_MODE_TRUE
 
 
-
-#
-# Figure out what the canonical build, host and target tuples are.
-#
-# Make sure we can run config.sub.
-$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
-  as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
-$as_echo_n "checking build system type... " >&6; }
-if ${ac_cv_build+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_build_alias=$build_alias
-test "x$ac_build_alias" = x &&
-  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
-test "x$ac_build_alias" = x &&
-  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
-ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
-  as_fn_error $? "$SHELL $ac_aux_dir/config.sub $ac_build_alias failed" "$LINENO" 5
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
-$as_echo "$ac_cv_build" >&6; }
-case $ac_cv_build in
-*-*-*) ;;
-*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
-esac
-build=$ac_cv_build
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_build
-shift
-build_cpu=$1
-build_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-build_os=$*
-IFS=$ac_save_IFS
-case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
-$as_echo_n "checking host system type... " >&6; }
-if ${ac_cv_host+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test "x$host_alias" = x; then
-  ac_cv_host=$ac_cv_build
-else
-  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
-    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
-fi
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
-$as_echo "$ac_cv_host" >&6; }
-case $ac_cv_host in
-*-*-*) ;;
-*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
-esac
-host=$ac_cv_host
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_host
-shift
-host_cpu=$1
-host_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-host_os=$*
-IFS=$ac_save_IFS
-case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
-
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for supported deployment target" >&5
-$as_echo_n "checking for supported deployment target... " >&6; }
-
-case ${host_os} in
-	*darwin*)
-		CPPFLAGS="-DDEPLOYMENT_TARGET_MACOSX=1 -DTARGET_OS_MAC=1 ${CPPFLAGS}"
-		deployment_target="Mac OS X"
-		;;
-
-	*freebsd*)
-		CPPFLAGS="-DDEPLOYMENT_TARGET_FREEBSD=1 -DTARGET_OS_FREEBSD=1 ${CPPFLAGS}"
-		deployment_target="FreeBSD"
-		;;
-
-	*linux*)
-		CPPFLAGS="-DDEPLOYMENT_TARGET_LINUX=1 -DTARGET_OS_LINUX=1 ${CPPFLAGS}"
-		deployment_target="Linux"
-		;;
-
-	*mingw*)
-		CPPFLAGS="-DDEPLOYMENT_TARGET_WINDOWS=1 -DTARGET_OS_WIN32=1 ${CPPFLAGS}"
-		deployment_target="Windows"
-		;;
-
-	*)
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: failed" >&5
-$as_echo "failed" >&6; }
-		as_fn_error $? "Unsupported deployment target ${host_os}" "$LINENO" 5;
-		;;
-esac
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${deployment_target}" >&5
-$as_echo "${deployment_target}" >&6; }
 
 #
 # Checks for programs
@@ -7767,7 +7810,7 @@ else
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
   fi
-  rm -rf conftest*
+  rm -f conftest*
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_nm_interface" >&5
 $as_echo "$lt_cv_nm_interface" >&6; }
@@ -9116,7 +9159,7 @@ for ac_symprfx in "" "_"; do
   # Check to see that the pipe works correctly.
   pipe_works=no
 
-  rm -rf conftest*
+  rm -f conftest*
   cat > conftest.$ac_ext <<_LT_EOF
 #ifdef __cplusplus
 extern "C" {
@@ -9632,7 +9675,7 @@ else
   if $GREP 'Manifest Tool' conftest.out > /dev/null; then
     lt_cv_path_mainfest_tool=yes
   fi
-  rm -rf conftest*
+  rm -f conftest*
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_path_mainfest_tool" >&5
 $as_echo "$lt_cv_path_mainfest_tool" >&6; }
@@ -11048,7 +11091,7 @@ ac_outfile=conftest.$ac_objext
 echo "$lt_simple_compile_test_code" >conftest.$ac_ext
 eval "$ac_compile" 2>&1 >/dev/null | $SED '/^$/d; /^ *+/d' >conftest.err
 _lt_compiler_boilerplate=`cat conftest.err`
-$RM -r conftest*
+$RM conftest*
 
 ac_outfile=conftest.$ac_objext
 echo "$lt_simple_link_test_code" >conftest.$ac_ext
@@ -11105,7 +11148,7 @@ else
        lt_cv_prog_compiler_rtti_exceptions=yes
      fi
    fi
-   $RM -r conftest*
+   $RM conftest*
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_prog_compiler_rtti_exceptions" >&5
@@ -11482,7 +11525,7 @@ else
        lt_cv_prog_compiler_pic_works=yes
      fi
    fi
-   $RM -r conftest*
+   $RM conftest*
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_prog_compiler_pic_works" >&5
@@ -11594,14 +11637,14 @@ else
      fi
    fi
    chmod u+w . 2>&5
-   $RM -r conftest*
+   $RM conftest*
    # SGI C++ compiler will create directory out/ii_files/ for
    # template instantiation
    test -d out/ii_files && $RM out/ii_files/* && rmdir out/ii_files
    $RM out/* && rmdir out
    cd ..
    $RM -r conftest
-   $RM -r conftest*
+   $RM conftest*
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_prog_compiler_c_o" >&5
@@ -11649,14 +11692,14 @@ else
      fi
    fi
    chmod u+w . 2>&5
-   $RM -r conftest*
+   $RM conftest*
    # SGI C++ compiler will create directory out/ii_files/ for
    # template instantiation
    test -d out/ii_files && $RM out/ii_files/* && rmdir out/ii_files
    $RM out/* && rmdir out
    cd ..
    $RM -r conftest
-   $RM -r conftest*
+   $RM conftest*
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_prog_compiler_c_o" >&5
@@ -11671,7 +11714,7 @@ if test "$lt_cv_prog_compiler_c_o" = no && test "$need_locks" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking if we can lock with hard links" >&5
 $as_echo_n "checking if we can lock with hard links... " >&6; }
   hard_links=yes
-  $RM -r conftest*
+  $RM conftest*
   ln conftest.a conftest.b 2>/dev/null && hard_links=no
   touch conftest.a
   ln conftest.a conftest.b 2>&5 || hard_links=no
@@ -12887,7 +12930,7 @@ $as_echo_n "checking whether -lc should be explicitly linked in... " >&6; }
 if ${lt_cv_archive_cmds_need_lc+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  $RM -r conftest*
+  $RM conftest*
 	echo "$lt_simple_compile_test_code" > conftest.$ac_ext
 
 	if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
@@ -12922,7 +12965,7 @@ else
 	else
 	  cat conftest.err 1>&5
 	fi
-	$RM -r conftest*
+	$RM conftest*
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_archive_cmds_need_lc" >&5
@@ -14788,7 +14831,7 @@ compiler=$CC
 echo "$lt_simple_compile_test_code" >conftest.$ac_ext
 eval "$ac_compile" 2>&1 >/dev/null | $SED '/^$/d; /^ *+/d' >conftest.err
 _lt_compiler_boilerplate=`cat conftest.err`
-$RM -r conftest*
+$RM conftest*
 
   ac_outfile=conftest.$ac_objext
 echo "$lt_simple_link_test_code" >conftest.$ac_ext
@@ -16610,7 +16653,7 @@ else
        lt_cv_prog_compiler_pic_works_CXX=yes
      fi
    fi
-   $RM -r conftest*
+   $RM conftest*
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_prog_compiler_pic_works_CXX" >&5
@@ -16713,14 +16756,14 @@ else
      fi
    fi
    chmod u+w . 2>&5
-   $RM -r conftest*
+   $RM conftest*
    # SGI C++ compiler will create directory out/ii_files/ for
    # template instantiation
    test -d out/ii_files && $RM out/ii_files/* && rmdir out/ii_files
    $RM out/* && rmdir out
    cd ..
    $RM -r conftest
-   $RM -r conftest*
+   $RM conftest*
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_prog_compiler_c_o_CXX" >&5
@@ -16765,14 +16808,14 @@ else
      fi
    fi
    chmod u+w . 2>&5
-   $RM -r conftest*
+   $RM conftest*
    # SGI C++ compiler will create directory out/ii_files/ for
    # template instantiation
    test -d out/ii_files && $RM out/ii_files/* && rmdir out/ii_files
    $RM out/* && rmdir out
    cd ..
    $RM -r conftest
-   $RM -r conftest*
+   $RM conftest*
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_prog_compiler_c_o_CXX" >&5
@@ -16787,7 +16830,7 @@ if test "$lt_cv_prog_compiler_c_o_CXX" = no && test "$need_locks" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking if we can lock with hard links" >&5
 $as_echo_n "checking if we can lock with hard links... " >&6; }
   hard_links=yes
-  $RM -r conftest*
+  $RM conftest*
   ln conftest.a conftest.b 2>/dev/null && hard_links=no
   touch conftest.a
   ln conftest.a conftest.b 2>&5 || hard_links=no
@@ -16874,7 +16917,7 @@ $as_echo_n "checking whether -lc should be explicitly linked in... " >&6; }
 if ${lt_cv_archive_cmds_need_lc_CXX+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  $RM -r conftest*
+  $RM conftest*
 	echo "$lt_simple_compile_test_code" > conftest.$ac_ext
 
 	if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
@@ -16909,7 +16952,7 @@ else
 	else
 	  cat conftest.err 1>&5
 	fi
-	$RM -r conftest*
+	$RM conftest*
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_archive_cmds_need_lc_CXX" >&5
