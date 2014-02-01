@@ -1,3 +1,7 @@
+/*
+ * main.cpp
+ */
+
 #include "stdafx.h"
 #include "SuperString.h"
 #include "CFTest.h"
@@ -10,8 +14,8 @@ int		main()
 	#if defined(__WIN32__)
 		#ifdef __MWERKS__
 			getc(stdin);
-		#endif
-	#endif
+		#endif /* __MWERKS__ */
+	#endif /* __WIN32__ */
 
 	return 0;
 }

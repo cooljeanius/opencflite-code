@@ -35,12 +35,12 @@ int		AssertAlert(const char *msgZ, const char *fileZ, long lineL, bool noThrowB 
 	#if TRACK_RETAINS
 		class	ScTrackRetains {
 			void	*i_dataP;
-			
+
 			public:
 			ScTrackRetains();
 			~ScTrackRetains();
 		};
-		
+
 		CFTypeRef	CFRetainDebug(CFTypeRef cf, bool do_itB = true);
 		void		CFReleaseDebug(CFTypeRef cf);
 	#else
@@ -53,7 +53,7 @@ int		AssertAlert(const char *msgZ, const char *fileZ, long lineL, bool noThrowB 
 		#define	CFReleaseDebug(_x)		CFRelease(_x)
 	#endif
 #else
-	
+
 	void	DebugReport(const char *utf8Z, OSStatus err);
 
 	#define		kKiloByte				1024
@@ -78,7 +78,7 @@ int		AssertAlert(const char *msgZ, const char *fileZ, long lineL, bool noThrowB 
 		typedef struct RGBColor		RGBColor;
 		typedef char *				Ptr;
 		typedef UInt32				OSType;
-		
+
 		#define __MACTYPES__
 	#else
 		#ifdef _CFTEST_
@@ -87,7 +87,7 @@ int		AssertAlert(const char *msgZ, const char *fileZ, long lineL, bool noThrowB 
 			#else
 				#include <QD/QuickDraw.h>
 			#endif
-		#else 
+		#else
 			#include "QuickDraw.h"
 		#endif
 	#endif
@@ -104,7 +104,7 @@ int		AssertAlert(const char *msgZ, const char *fileZ, long lineL, bool noThrowB 
 		#define	ERRL(FUNC, _str)	if (!err) { ERR(FUNC); if (err) { 	LogErr("### Error " _str, err); }}
 		#define	ETRL(_exp, _str)	{ ERRL(_exp, _str); if (err) { return err;} }
 
-		#define BEX_THROW(ERR)		throw ((long) ERR)	
+		#define BEX_THROW(ERR)		throw ((long) ERR)
 		#define ETX(EXPR)			{ OSStatus _err = (EXPR); if (_err) BEX_THROW(_err); }
 	#endif
 
@@ -183,32 +183,32 @@ typedef SInt64                          LongDateTime;
 template <typename T>
 class	ScCFReleaser {
 	T	i_typeRef;
-	
+
 	public:
 	ScCFReleaser(T typeRef = NULL, bool retainB = false) : i_typeRef(typeRef)	{
 		if (retainB) {
 			Retain();
 		}
 	}
-	
+
 	~ScCFReleaser() {
 		Release();
 	}
-	
+
 	CFIndex RetainCount()	{
 		CFIndex		countL = 0;
-		
+
 		if (i_typeRef) {
 			 countL = CFGetRetainCount(i_typeRef);
 		}
-		
+
 		return countL;
 	}
-	
+
 	T	Retain()	{	if (i_typeRef) CFRetainDebug(i_typeRef);	return i_typeRef;	}
 	T	Release()	{
 		CFIndex		countL = RetainCount();
-		
+
 		if (i_typeRef) {
 			CFReleaseDebug(i_typeRef);
 		}
@@ -216,75 +216,75 @@ class	ScCFReleaser {
 		if (countL == 1) {
 			i_typeRef = NULL;
 		}
-		
+
 		return i_typeRef;
 	}
-	
+
 	T	Get() const		{	return i_typeRef;	}
 	T	Set(T typeRef)	{
-		
+
 		if (typeRef) {
 			CFRetainDebug(typeRef);
 		}
-		
+
 		Release();
-		
+
 		i_typeRef = typeRef;
 		return i_typeRef;
 	}
-	
+
 	T*	AddressOf()	{	return &i_typeRef;	}
-	
+
 	operator CFTypeRef()	{	return i_typeRef;	}
 	operator T()			{	return i_typeRef;	}
 	operator T*()			{	return AddressOf();	}
-	
+
 	T	operator =(T typeRef)	{	return Set(typeRef);	}
-	
+
 	T	transfer()	{
 		T	ret = i_typeRef;
-		
+
 		i_typeRef = NULL;
 		return ret;
 	}
-	
+
 	T	adopt(T typeRef)	{
 		Set(NULL);
 		i_typeRef = typeRef;
 		return i_typeRef;
 	}
-	
+
 	void	LogCount(const char *nameZ) {	S_LogCount(i_typeRef, nameZ);	}
 };
 
 /***************************************************************************************/
 class	CDictionaryIterator {
 	CFDictionaryRef		i_dict;
-	
+
 	static	void 	CB_S_Operator(const void *key, const void *value, void *context) {
 		CDictionaryIterator		*thiz = (CDictionaryIterator *)context;
-		
+
 		thiz->operator()((CFStringRef)key, value);
 	}
-	
+
 public:
 	CDictionaryIterator(CFDictionaryRef dict) : i_dict(dict) { }
-	
+
 	void	for_each() {
 		CFDictionaryApplyFunction(i_dict, CB_S_Operator, this);
 	}
-	
+
 	virtual void	operator()(CFStringRef key, const void *value) {
-		
+
 	}
 };
 
 template <class Function>
 class CDict_ForEach : public CDictionaryIterator {
 	Function		i_f;
-	
+
 public: CDict_ForEach(CFDictionaryRef dict, Function f) : CDictionaryIterator(dict), i_f(f) { }
-	
+
 	void	operator()(CFStringRef keyRef, const void *valRef) {
 		i_f(keyRef, valRef);
 	}
@@ -295,7 +295,7 @@ inline	void	dict_for_each(CFDictionaryRef dict, Function f)
 {
 	if (dict) {
 		CDict_ForEach<Function>		cdict(dict, f);
-		
+
 		cdict.for_each();
 	}
 }
@@ -305,29 +305,29 @@ CFArrayApplyFunction((CFArrayRef)_array, CFArrayGetRange((CFArrayRef)_array), _c
 
 class	CArrayIterator {
 	CFArrayRef		i_array;
-	
+
 	static	void 	CB_S_Operator(const void *value, void *context) {
 		CArrayIterator		*thiz = (CArrayIterator *)context;
-		
+
 		thiz->operator()(value);
 	}
-	
+
 public:
 	CArrayIterator(CFArrayRef array) : i_array(array) { }
-	
+
 	void	for_each() {
 		CFArrayApplyFunctionToAll(i_array, CB_S_Operator, this);
 	}
-	
+
 	virtual void	operator()(const void *value) { }
 };
 
 template <class Function>
 class CArray_ForEach : public CArrayIterator {
 	Function		i_f;
-	
+
 public: CArray_ForEach(CFArrayRef dict, Function f) : CArrayIterator(dict), i_f(f) { }
-	
+
 	void	operator()(CFTypeRef valRef) {
 		i_f(valRef);
 	}
@@ -338,7 +338,7 @@ inline	void	array_for_each(CFArrayRef array, Function f)
 {
 	if (array) {
 		CArray_ForEach<Function>		carray(array, f);
-		
+
 		carray.for_each();
 	}
 }
@@ -371,8 +371,8 @@ class CCFDictionary : public ScCFReleaser<CFMutableDictionaryRef> {
 	}
 
 	public:
-	CCFDictionary(CFDictionaryRef dictRef0 = NULL, bool retainB = false) : 
-		_inherited((CFMutableDictionaryRef)dictRef0, retainB) 
+	CCFDictionary(CFDictionaryRef dictRef0 = NULL, bool retainB = false) :
+		_inherited((CFMutableDictionaryRef)dictRef0, retainB)
 	{ if (dictRef0 == NULL && retainB == false) {validate();} }
 
 	CFDictionaryRef*	ImmutableAddressOf()	{	return (CFDictionaryRef *)AddressOf();	}
@@ -390,12 +390,12 @@ class CCFDictionary : public ScCFReleaser<CFMutableDictionaryRef> {
 
 		_inherited::adopt(dictRef);
 	};
-	
+
 	CFMutableDictionaryRef		Copy();
 
 	bool						ContainsKey(CFStringRef keyRef);
 	bool						ContainsKey(const char *utf8Z);
-	
+
 	bool						empty()	{	return size() == 0;		}
 	CFIndex						size() {
 		return CFDictionaryGetCount(Get());
@@ -415,11 +415,11 @@ class CCFDictionary : public ScCFReleaser<CFMutableDictionaryRef> {
 
 	inline CFTypeRef	GetValue(CFStringRef key) {
 		CFTypeRef		typeRef = NULL;
-		
+
 		if (ContainsKey(key)) {
 			typeRef = CFDictionaryGetValue(Get(), key);
 		}
-		
+
 		return typeRef;
 	}
 
@@ -441,7 +441,7 @@ class CCFDictionary : public ScCFReleaser<CFMutableDictionaryRef> {
 	/*********************************************/
 	void				RemoveValue		(CFStringRef key);
 	void				RemoveValue		(const char *utf8Z);
-	
+
 	virtual void		SetRealValue(CFTypeRef key, CFTypeRef val) {
 		CFDictionarySetValue(Get(), key, val);
 	}
@@ -484,10 +484,10 @@ class CCFArray : public ScCFReleaser<CFMutableArrayRef> {
 	}
 
 	public:
-	CCFArray(CFArrayRef arrayRef0 = NULL, bool retainB = false) : 
+	CCFArray(CFArrayRef arrayRef0 = NULL, bool retainB = false) :
 		_inherited((CFMutableArrayRef)arrayRef0, retainB)
 	{ if (arrayRef0 == NULL && retainB == false) {validate();} }
-	
+
 	void	realloc() {
 		CFMutableArrayRef	arrayRef = CFArrayCreateMutable(
 			kCFAllocatorDefault, 0,
@@ -499,7 +499,7 @@ class CCFArray : public ScCFReleaser<CFMutableArrayRef> {
 
 		_inherited::adopt(arrayRef);
 	};
-	
+
 	bool				empty()	{	return size() == 0;		}
 	CFIndex				size() {
 		return CFArrayGetCount(Get());
@@ -512,7 +512,7 @@ class CCFArray : public ScCFReleaser<CFMutableArrayRef> {
 	CFIndex				GetFirstIndexOfValue(CFTypeRef val) {
 		return CFArrayGetFirstIndexOfValue(Get(), CFArrayGetRange(Get()), val);
 	}
-	
+
 	void				push_back(SInt32 val) {
 		ScCFReleaser<CFNumberRef>	numberRef(CFNumberCreateWithSInt32(val));
 
@@ -527,7 +527,7 @@ class CCFArray : public ScCFReleaser<CFMutableArrayRef> {
 		CFArrayInsertValueAtIndex(Get(), idx, val);
 	}
 
-	SInt32				GetIndValAs_SInt32(CFIndex idx) 
+	SInt32				GetIndValAs_SInt32(CFIndex idx)
 	{
 		CFNumberRef			numberRef((CFNumberRef)operator[](idx));
 		SInt32				valL = 0;
@@ -538,7 +538,7 @@ class CCFArray : public ScCFReleaser<CFMutableArrayRef> {
 
 		return valL;
 	}
-	
+
 	void				set_ind_value(CFIndex idx, CFTypeRef val) {
 		CFArraySetValueAtIndex(Get(), idx, val);
 	}
@@ -568,7 +568,7 @@ class CCFXmlTree : public ScCFReleaser<CFXMLTreeRef> {
 	CCFXmlTree(CFXMLTreeRef treeRef0 = NULL, bool retainB = false) : _inherited(treeRef0, retainB) { }
 
 	bool	CreateFromData(CFDataRef xmlData, CFURLRef dataSource, CFOptionFlags parseOptions = kCFXMLParserSkipWhitespace);
-	
+
 	CFXMLNodeRef		GetNode()	{	return CFXMLTreeGetNode(Get());	}
 	CFIndex				size() {
 		return CFTreeGetChildCount(Get());
@@ -611,10 +611,10 @@ bool		Read_XML(const CFURLRef url, CCFXmlTree& xml);
 //	logging
 class CCFLog {
 	bool	i_crB;
-	
-public: 
+
+public:
 	CCFLog(bool crB = false) : i_crB(crB) { }
-	
+
 	void operator()(CFTypeRef valRef);
 	//inline void operator()(void const* valRef)	{	operator()((CFTypeRef)valRef);	}
 	void operator()(CFStringRef keyRef, CFTypeRef valRef);

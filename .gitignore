@@ -26,7 +26,10 @@ CoreFoundation.pc
 Makefile
 CF-Objects/*
 dist/*
+Cocotron/build/*
+examples/CFTest/mac/build/*
 macosx/build/*
+objc4/build/*
 *.build
 *.pbxuser
 *.perspectivev3

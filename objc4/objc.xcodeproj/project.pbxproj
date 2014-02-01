@@ -857,7 +857,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ ${NATIVE_ARCH} = ${NATIVE_ARCH_32_BIT}  -o  ${NATIVE_ARCH} = ${NATIVE_ARCH_64_BIT}  -o  ${NATIVE_ARCH} = ${NATIVE_ARCH_ACTUAL} ]; then\n    \"${BUILT_PRODUCTS_DIR}/markgc\" -p \"${BUILT_PRODUCTS_DIR}/libobjc.A.dylib\"\nelse\n    echo \"Skipping markgc for cross compile.\"\nfi";
+			shellScript = "#!/bin/sh\n\nset -ex\n\nif [ ${NATIVE_ARCH} = ${NATIVE_ARCH_32_BIT} -o ${NATIVE_ARCH} = ${NATIVE_ARCH_64_BIT} -o ${NATIVE_ARCH} = ${NATIVE_ARCH_ACTUAL} ]; then\n    echo \"running markgc on libobjc\"\n    \"${BUILT_PRODUCTS_DIR}/markgc\" -p \"${BUILT_PRODUCTS_DIR}/libobjc.A.dylib\"\nelse\n    echo \"Skipping markgc for cross compile.\"\nfi\n";
 		};
 		830F2AFA0D73BC5800392440 /* Run Script (symlink) */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -871,7 +871,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "cd \"${INSTALL_DIR}\"\n/bin/ln -s libobjc.A.dylib libobjc.dylib\n";
+			shellScript = "#!/bin/sh\n\nset -ex\n\ncd \"${INSTALL_DIR}\" && pwd\n/bin/ln -sv libobjc.A.dylib libobjc.dylib\n";
 		};
 		83E50D260FF19E8200D74C19 /* Run Script (symlink) */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1094,6 +1094,7 @@
 					"$(DSTROOT)/usr/local/include/**",
 					"$(CONFIGURATION_BUILD_DIR)/usr/include/**",
 					"$(CONFIGURATION_BUILD_DIR)/usr/local/include/**",
+					/opt/local/include,
 				);
 				INSTALL_PATH = /usr/lib;
 				ORDER_FILE = libobjc.order;
@@ -1149,23 +1150,42 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				FRAMEWORK_SEARCH_PATHS = /opt/local/Library/Frameworks;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				"GCC_VERSION[sdk=macosx10.6][arch=*]" = com.apple.compilers.llvm.clang.1_0;
 				"GCC_VERSION[sdk=macosx10.7][arch=*]" = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_PKGINFO_FILE = YES;
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LD_GENERATE_MAP_FILE = YES;
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = (
+					"-fpermissive",
+					"$(OTHER_CFLAGS)",
+				);
 				"OTHER_CPLUSPLUSFLAGS[sdk=macosx10.7][arch=*]" = (
 					"-stdlib=libc++",
 					"$(OTHER_CFLAGS)",
 				);
 				PREBINDING = NO;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
+				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "armv6 armv7 i386 x86_64";
+				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = (
+					"-Wimplicit",
 					"-Wall",
 					"-Wno-four-char-constants",
 				);
