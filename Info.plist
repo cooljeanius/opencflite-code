@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>CFLite</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.apple.CFLite</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -20,13 +20,13 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-        <key>CarbonLazyValues</key>
-        <dict>
-               <key>CodeFragmentManager</key>
-               <dict>
-                       <key>CoreFoundation</key>
-                       <string>CFMPriv_CoreFoundation</string>
-               </dict>
-        </dict>
+	<key>CarbonLazyValues</key>
+	<dict>
+		<key>CodeFragmentManager</key>
+		<dict>
+			<key>CoreFoundation</key>
+			<string>CFMPriv_CoreFoundation</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

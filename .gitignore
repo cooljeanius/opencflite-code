@@ -36,3 +36,7 @@ objc4/build/*
 confdefs.h
 conftest*
 conf*/*.awk
+*.xcworkspacedata
+*.xcuserstate
+*/xcuserdata/*
+*.xcuserdatad
